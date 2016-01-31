@@ -47,7 +47,7 @@ abstract class abstractParser {
         $this->setTidyOptions();
     }
 
-    protected function __destruct()
+    public function __destruct()
     {
         fclose($this->rLogFile);
     }
@@ -559,7 +559,8 @@ abstract class abstractParser {
     /**
      * Получаем контент документа через file_get_contents
      *
-     * @param sting $sUrl
+     * @param string $sUrl
+     * @return string
      */
     private function getPageContentNoCURL($sUrl)
     {
@@ -576,6 +577,7 @@ abstract class abstractParser {
             $this->writeToErrorLog($e->getMessage());
         }
 
+        return $sContent;
     }
 
     /**

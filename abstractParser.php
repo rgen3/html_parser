@@ -49,7 +49,8 @@ abstract class abstractParser {
 
     public function __destruct()
     {
-        fclose($this->rLogFile);
+        if ($this->rLogFile)
+            fclose($this->rLogFile);
     }
 
     /**
@@ -162,6 +163,18 @@ abstract class abstractParser {
     }
 
     /**
+     * Получает текст из ноды по XPath
+     *
+     * @param $oDOM
+     * @param $sXPath
+     * @return string
+     */
+    protected function getNodeText(&$oDOM, $sXPath)
+    {
+        return $this->getNodesByXPath($oDOM, $sXPath, null, 0)->textContent;
+    }
+
+    /**
      * Возвращает массив указанного аттрибутов
      * в нодах
      *
@@ -192,13 +205,19 @@ abstract class abstractParser {
     }
 
     /**
-     * TODO: получение ноды по id
+     * Получение ноды по id
      *
      * @param DOMDocument $oDOM
      * @param $id
      */
-    public function getNodeById(DOMDocument &$oDOM, $id)
+    public function getNodeById(DOMDocument &$oDOM, $sID)
     {
+        $oXPath = new DOMXPath($oDOM);
+        $oNode = $oXPath->query("//*[@id='{$sID}']")->item(1);
+
+        unset($oXPath);
+
+        return $oNode;
     }
 
     /**
@@ -357,12 +376,15 @@ abstract class abstractParser {
     }
 
     /**
-     * TODO: получение расширения файла из его имени
+     * Получение расширения файла из его имени
      *
+     * @param $sFileName
+     * @return bool|string
      */
-    private function getFileExtension()
+    private function getFileExtension($sFileName)
     {
-
+        preg_match('#\.([^.]+)$#', $sFileName, $aMatches);
+        return isset($aMatches[1]) ? (string) $aMatches[1] : false;
     }
 
     /**
